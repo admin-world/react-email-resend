@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { render } from "@react-email/render";
+import Image from "next/image";
 
 // Support Templates
 import { TicketOpenedEmail } from "@/emails/support/ticket-opened";
@@ -18,333 +19,484 @@ import { QuotationApprovalEmail } from "@/emails/sales/quotation-approval";
 import { NewLeadDealerEmail } from "@/emails/sales/new-lead-dealer";
 import { OrderConfirmedEmail } from "@/emails/sales/order-confirmed";
 
-// Type for template component
-type EmailComponent = React.ComponentType<any>;
+type EmailComponent = React.ComponentType<Record<string, unknown>>;
 
-const templates: Record<string, Array<{ id: string; name: string; description: string; component: EmailComponent }>> = {
-  support: [
-    {
-      id: "ticket-opened",
-      name: "Ticket Opened",
-      description: "Confirmation email when a support ticket is created",
-      component: TicketOpenedEmail as EmailComponent,
-    },
-    {
-      id: "ticket-resolved",
-      name: "Ticket Resolved",
-      description: "Notification when a support ticket is resolved",
-      component: TicketResolvedEmail as EmailComponent,
-    },
-    {
-      id: "warranty-claim",
-      name: "Warranty Claim",
-      description: "Acknowledgment of a warranty claim submission",
-      component: WarrantyClaimEmail as EmailComponent,
-    },
-  ],
-  invoices: [
-    {
-      id: "invoice-approval",
-      name: "Invoice + Approval",
-      description: "Invoice with approve/decline actions and payment options",
-      component: InvoiceApprovalEmail as EmailComponent,
-    },
-    {
-      id: "payment-confirmed",
-      name: "Payment Confirmed",
-      description: "Confirmation when payment is received",
-      component: PaymentConfirmedEmail as EmailComponent,
-    },
-    {
-      id: "payment-overdue",
-      name: "Payment Overdue",
-      description: "Urgent notice for past-due invoices",
-      component: PaymentOverdueEmail as EmailComponent,
-    },
-  ],
-  sales: [
-    {
-      id: "quotation-approval",
-      name: "Quotation + Approval",
-      description: "Quote with parts table, pricing, and approval actions",
-      component: QuotationApprovalEmail as EmailComponent,
-    },
-    {
-      id: "new-lead-dealer",
-      name: "New Lead / Dealer",
-      description: "Welcome email for new dealers and business customers",
-      component: NewLeadDealerEmail as EmailComponent,
-    },
-    {
-      id: "order-confirmed",
-      name: "Order Confirmed",
-      description: "Order confirmation with shipping details",
-      component: OrderConfirmedEmail as EmailComponent,
-    },
-  ],
+type TemplateEntry = {
+  id: string;
+  name: string;
+  label: string;
+  description: string;
+  component: EmailComponent;
+  image: string;
+  inbox: string;
+  accent: string;
 };
 
-const categories = [
-  { id: "support", label: "Support", email: "support@auapw.org", color: "#C0392B" },
-  { id: "invoices", label: "Invoices", email: "invoices@auapw.org", color: "#E67E22" },
-  { id: "sales", label: "Sales", email: "sales@auapw.org", color: "#2563a8" },
+type Category = {
+  id: string;
+  label: string;
+  accent: string;
+  image: string;
+  inbox: string;
+  templates: TemplateEntry[];
+};
+
+const CATEGORIES: Category[] = [
+  {
+    id: "support",
+    label: "Support",
+    accent: "#c0392b",
+    image: "/card-support.jpg",
+    inbox: "support@auapw.org",
+    templates: [
+      { id: "ticket-opened",  name: "Ticket Opened",  label: "SUPPORT EMAILS",  description: "Confirmation sent when a new support ticket is created.", component: TicketOpenedEmail  as EmailComponent, image: "/card-support.jpg",  inbox: "support@auapw.org",  accent: "#c0392b" },
+      { id: "ticket-resolved", name: "Ticket Resolved", label: "SUPPORT EMAILS", description: "Notification confirming a support ticket has been resolved.", component: TicketResolvedEmail as EmailComponent, image: "/card-support.jpg",  inbox: "support@auapw.org",  accent: "#c0392b" },
+      { id: "warranty-claim",  name: "Warranty Claim",  label: "SUPPORT EMAILS",  description: "Acknowledgment of a submitted warranty claim.",            component: WarrantyClaimEmail  as EmailComponent, image: "/card-support.jpg",  inbox: "support@auapw.org",  accent: "#c0392b" },
+    ],
+  },
+  {
+    id: "invoices",
+    label: "Invoices",
+    accent: "#e8720c",
+    image: "/card-invoice.jpg",
+    inbox: "invoices@auapw.org",
+    templates: [
+      { id: "invoice-approval",  name: "Invoice + Approval",  label: "INVOICE EMAILS",  description: "Invoice with approve / decline actions and payment options.", component: InvoiceApprovalEmail  as EmailComponent, image: "/card-invoice.jpg", inbox: "invoices@auapw.org", accent: "#e8720c" },
+      { id: "payment-confirmed", name: "Payment Confirmed", label: "INVOICE EMAILS", description: "Confirmation sent when a payment is successfully received.",  component: PaymentConfirmedEmail as EmailComponent, image: "/card-invoice.jpg", inbox: "invoices@auapw.org", accent: "#e8720c" },
+      { id: "payment-overdue",   name: "Payment Overdue",   label: "INVOICE EMAILS",   description: "Urgent notice sent for past-due invoices.",                 component: PaymentOverdueEmail   as EmailComponent, image: "/card-invoice.jpg", inbox: "invoices@auapw.org", accent: "#e8720c" },
+    ],
+  },
+  {
+    id: "sales",
+    label: "Sales",
+    accent: "#2563eb",
+    image: "/card-sales.jpg",
+    inbox: "sales@auapw.org",
+    templates: [
+      { id: "quotation-approval", name: "Quotation + Approval", label: "SALES EMAILS", description: "Quote with parts table, pricing, and approval actions.", component: QuotationApprovalEmail as EmailComponent, image: "/card-sales.jpg", inbox: "sales@auapw.org", accent: "#2563eb" },
+      { id: "new-lead-dealer",    name: "New Lead / Dealer",    label: "SALES EMAILS",    description: "Welcome email for new dealers and business customers.", component: NewLeadDealerEmail    as EmailComponent, image: "/card-sales.jpg", inbox: "sales@auapw.org", accent: "#2563eb" },
+      { id: "order-confirmed",    name: "Order Confirmed",      label: "SALES EMAILS",      description: "Order confirmation with shipping details.",            component: OrderConfirmedEmail    as EmailComponent, image: "/card-sales.jpg", inbox: "sales@auapw.org", accent: "#2563eb" },
+    ],
+  },
 ];
 
-export default function Page() {
-  const [selectedTemplate, setSelectedTemplate] = React.useState<string | null>(null);
-  const [htmlContent, setHtmlContent] = React.useState<string>("");
+const ALL_TEMPLATES = CATEGORIES.flatMap((c) => c.templates);
 
-  const activeTemplate = React.useMemo(() => {
-    if (!selectedTemplate) return null;
-    for (const category of Object.values(templates)) {
-      const found = category.find((t) => t.id === selectedTemplate);
-      if (found) return found;
-    }
-    return null;
-  }, [selectedTemplate]);
+const NAV_ITEMS = ["HOME", "TEMPLATES", "SUPPORT", "MY ACCOUNT"];
 
-  React.useEffect(() => {
-    async function renderEmail() {
-      if (activeTemplate) {
-        const Component = activeTemplate.component;
-        const html = await render(<Component />);
-        setHtmlContent(html);
-      }
-    }
-    renderEmail();
-  }, [activeTemplate]);
+/* ─── Filter sidebar state ─────────────────────────────────────── */
+type Filters = {
+  inboxes: Record<string, boolean>;
+  categories: Record<string, boolean>;
+};
 
+function initFilters(): Filters {
+  return {
+    inboxes: { support: false, invoices: false, sales: false },
+    categories: { support: false, invoices: false, sales: false },
+  };
+}
+
+/* ─── Tiny chevron icon ─────────────────────────────────────────── */
+function Chevron({ open }: { open: boolean }) {
   return (
-    <div className="min-h-screen bg-[#0e1014] text-white flex">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-[#111318] border-r border-white/5 flex flex-col sticky top-0 h-screen overflow-y-auto">
-        <div className="p-5 border-b border-white/5">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 bg-[#C0392B] rounded-md flex items-center justify-center text-[8px] font-extrabold tracking-wide">
-              AUAPW
-            </div>
-            <div>
-              <div className="text-sm font-extrabold tracking-wider">AUAPW.ORG</div>
-              <div className="text-[9px] text-white/35 uppercase tracking-wider">
-                Email Templates
-              </div>
-            </div>
-          </div>
-          <div className="text-[10px] text-white/30 pl-12">
-            All Used Auto Parts Warehouse
-          </div>
-        </div>
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden="true"
+      className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+    >
+      <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
-        <div className="p-3">
-          <div className="text-[9px] font-bold tracking-widest uppercase text-white/25 px-2 mb-2">
-            Navigation
-          </div>
+/* ─── Cart icon ─────────────────────────────────────────────────── */
+function CartIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  );
+}
+
+/* ─── Checkbox ──────────────────────────────────────────────────── */
+function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer group select-none py-0.5">
+      <span
+        className="w-3.5 h-3.5 border flex items-center justify-center flex-shrink-0 transition-colors"
+        style={{ borderColor: checked ? "#e8720c" : "rgba(255,255,255,0.25)", backgroundColor: checked ? "#e8720c" : "transparent" }}
+        onClick={onChange}
+        role="checkbox"
+        aria-checked={checked}
+        tabIndex={0}
+        onKeyDown={(e) => e.key === " " && onChange()}
+      >
+        {checked && (
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+            <path d="M1 4l2 2 4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </span>
+      <span className="text-[11px] uppercase tracking-wider text-white/55 group-hover:text-white/80 transition-colors">{label}</span>
+    </label>
+  );
+}
+
+/* ─── Filter section ─────────────────────────────────────────────── */
+function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <div className="border-t border-white/8">
+      <button
+        className="w-full flex items-center justify-between px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-white/80 hover:text-white transition-colors"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        {title}
+        <Chevron open={open} />
+      </button>
+      {open && <div className="px-4 pb-3 flex flex-col gap-1">{children}</div>}
+    </div>
+  );
+}
+
+/* ─── Template card (matches the screenshot style) ──────────────── */
+function TemplateCard({ template, onClick }: { template: TemplateEntry; onClick: () => void }) {
+  return (
+    <article
+      className="relative rounded overflow-hidden cursor-pointer group"
+      style={{
+        border: "1px solid rgba(255,255,255,0.12)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 20px rgba(0,0,0,0.55)",
+        background: "#13161c",
+      }}
+      onClick={onClick}
+    >
+      {/* Metallic corner accents */}
+      <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-white/30 z-10" />
+      <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-white/30 z-10" />
+      <span className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-white/30 z-10" />
+      <span className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-white/30 z-10" />
+
+      {/* Card image */}
+      <div className="relative h-44 overflow-hidden">
+        <Image
+          src={template.image}
+          alt={template.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#13161c] via-[#13161c]/20 to-transparent" />
+        {/* accent top strip */}
+        <div className="absolute top-0 inset-x-0 h-0.5" style={{ backgroundColor: template.accent }} />
+      </div>
+
+      {/* Card body */}
+      <div className="p-4">
+        <h3 className="text-base font-black uppercase tracking-wider text-white mb-1 text-balance">
+          {template.name}
+        </h3>
+        <p className="text-[11px] text-white/40 leading-relaxed mb-4">{template.description}</p>
+
+        {/* Buttons — match screenshot exactly */}
+        <div className="flex gap-2">
           <button
-            onClick={() => setSelectedTemplate(null)}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-left ${
-              !selectedTemplate
-                ? "bg-[#C0392B]/15 text-white"
-                : "text-white/55 hover:bg-white/5 hover:text-white"
-            }`}
+            className="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest border transition-colors text-white/70 hover:text-white hover:border-white/50"
+            style={{ borderColor: "rgba(255,255,255,0.22)", background: "rgba(255,255,255,0.04)" }}
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
           >
-            <div
-              className={`w-1.5 h-1.5 rounded-full ${
-                !selectedTemplate ? "bg-[#C0392B]" : "bg-white/20"
-              }`}
-            />
-            <div>
-              <div className="text-xs font-semibold">Template Index</div>
-              <div className="text-[10px] text-white/30">All 9 templates</div>
-            </div>
+            View Email
+          </button>
+          <button
+            className="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest transition-opacity hover:opacity-80"
+            style={{ backgroundColor: template.accent, color: "#fff" }}
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+          >
+            Preview Now
           </button>
         </div>
+      </div>
+    </article>
+  );
+}
 
-        {categories.map((category) => (
-          <div key={category.id} className="p-3">
-            <div
-              className="text-[9px] font-bold tracking-widest uppercase px-2 mb-2"
-              style={{ color: `${category.color}99` }}
-            >
-              {category.email}
-            </div>
-            {templates[category.id as keyof typeof templates].map((template) => (
+/* ─── Main page ─────────────────────────────────────────────────── */
+export default function Page() {
+  const [activeNav, setActiveNav] = React.useState("TEMPLATES");
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [htmlContent, setHtmlContent] = React.useState("");
+  const [filters, setFilters] = React.useState<Filters>(initFilters);
+  const [priceRange, setPriceRange] = React.useState(60);
+  const [sortBy, setSortBy] = React.useState("RELEVANCE, PRICE, NAME");
+  const [page] = React.useState(1);
+
+  /* Which category is active in the hero? Determined by selectedId */
+  const activeCategory = React.useMemo(() => {
+    if (!selectedId) return null;
+    return CATEGORIES.find((c) => c.templates.some((t) => t.id === selectedId)) ?? null;
+  }, [selectedId]);
+
+  const activeTemplate = React.useMemo(() => {
+    if (!selectedId) return null;
+    return ALL_TEMPLATES.find((t) => t.id === selectedId) ?? null;
+  }, [selectedId]);
+
+  /* Render selected email to HTML */
+  React.useEffect(() => {
+    if (!activeTemplate) { setHtmlContent(""); return; }
+    const Component = activeTemplate.component;
+    render(<Component />).then(setHtmlContent).catch(() => setHtmlContent(""));
+  }, [activeTemplate]);
+
+  /* Filtered template list */
+  const visibleTemplates = React.useMemo(() => {
+    const anyInbox = Object.values(filters.inboxes).some(Boolean);
+    const anyCat = Object.values(filters.categories).some(Boolean);
+    return ALL_TEMPLATES.filter((t) => {
+      if (anyInbox && !filters.inboxes[CATEGORIES.find((c) => c.templates.includes(t))?.id ?? ""]) return false;
+      if (anyCat && !filters.categories[CATEGORIES.find((c) => c.templates.includes(t))?.id ?? ""]) return false;
+      return true;
+    });
+  }, [filters]);
+
+  const totalPages = Math.ceil(visibleTemplates.length / 9);
+
+  /* Toggle helpers */
+  const toggleInbox = (key: string) =>
+    setFilters((f) => ({ ...f, inboxes: { ...f.inboxes, [key]: !f.inboxes[key] } }));
+  const toggleCat = (key: string) =>
+    setFilters((f) => ({ ...f, categories: { ...f.categories, [key]: !f.categories[key] } }));
+
+  /* Hero title */
+  const heroTitle = activeCategory
+    ? `${activeCategory.label.toUpperCase()}: RELIABLE, RESPONSIVE, AND READY TO SEND.`
+    : "AUAPW: PROFESSIONAL EMAIL TEMPLATES FOR EVERY WORKFLOW.";
+
+  return (
+    <div className="min-h-screen bg-[#0d0f12] text-[#f0f2f5] font-sans flex flex-col">
+
+      {/* ── TOP NAV (matches screenshot) ─────────────────────────── */}
+      <header className="bg-[#13161c] border-b border-white/8 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-6 h-14">
+          {/* Logo */}
+          <div
+            className="flex items-center h-full px-5 -ml-6 text-xl font-black tracking-widest uppercase"
+            style={{
+              background: "linear-gradient(135deg,#1e2128 0%,#2a2e38 100%)",
+              borderRight: "1px solid rgba(255,255,255,0.12)",
+              clipPath: "polygon(0 0,100% 0,92% 100%,0 100%)",
+              paddingRight: "2.5rem",
+            }}
+          >
+            AUAPW.ORG
+          </div>
+
+          {/* Nav items */}
+          <nav className="flex items-center gap-8" aria-label="Main navigation">
+            {NAV_ITEMS.map((item) => (
               <button
-                key={template.id}
-                onClick={() => setSelectedTemplate(template.id)}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-left mb-0.5 ${
-                  selectedTemplate === template.id
-                    ? "bg-white/5 text-white"
-                    : "text-white/55 hover:bg-white/5 hover:text-white"
+                key={item}
+                onClick={() => setActiveNav(item)}
+                className={`text-[12px] font-bold tracking-widest uppercase pb-0.5 transition-colors ${
+                  activeNav === item
+                    ? "text-[#e8720c] border-b-2 border-[#e8720c]"
+                    : "text-white/55 hover:text-white"
                 }`}
               >
-                <div
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                />
-                <div className="text-xs font-semibold">{template.name}</div>
+                {item}
               </button>
             ))}
-          </div>
-        ))}
+          </nav>
 
-        <div className="mt-auto p-4 border-t border-white/5">
-          <div className="text-[10px] text-white/20 text-center leading-relaxed">
-            Built with React Email
-            <br />
-            v0.dev - 2025
-          </div>
+          {/* Cart */}
+          <button className="text-white/60 hover:text-white transition-colors" aria-label="Cart">
+            <CartIcon />
+          </button>
         </div>
-      </aside>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <header className="bg-[#111318] border-b border-white/5 px-6 py-4 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h1 className="text-base font-bold">
-              {activeTemplate ? activeTemplate.name : "Email Template System"}
-            </h1>
-            <p className="text-[11px] text-white/35">
-              {activeTemplate
-                ? activeTemplate.description
-                : "9 templates across 3 inboxes — select to preview & download"}
-            </p>
-          </div>
-          {activeTemplate && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(htmlContent);
-                }}
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-white/15 text-white/60 rounded-md hover:border-white/30 hover:text-white transition-colors"
-              >
-                Copy HTML
-              </button>
-              <button
-                onClick={() => {
-                  const blob = new Blob([htmlContent], { type: "text/html" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `auapw-${activeTemplate.id}.html`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-[#C0392B] text-white rounded-md hover:bg-[#96281B] transition-colors"
-              >
-                Download
-              </button>
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="relative h-72 flex items-end justify-center overflow-hidden">
+        <Image
+          src="/auapw-hero.jpg"
+          alt="AUAPW hero background"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-[#0d0f12]/70" />
+
+        {/* Overlapping hero content */}
+        <div className="relative z-10 text-center pb-8 px-6">
+          <h1
+            className="text-3xl md:text-4xl font-black uppercase tracking-widest text-white text-balance"
+            style={{ textShadow: "0 2px 24px rgba(0,0,0,0.9)" }}
+          >
+            {heroTitle}
+          </h1>
+        </div>
+      </section>
+
+      {/* ── BODY (sidebar + grid) ─────────────────────────────────── */}
+      <div className="flex flex-1">
+
+        {/* ── FILTER SIDEBAR ──────────────────────────────────────── */}
+        <aside
+          className="w-60 flex-shrink-0 sticky top-14 self-start overflow-y-auto"
+          style={{
+            background: "#13161c",
+            borderRight: "1px solid rgba(255,255,255,0.07)",
+            maxHeight: "calc(100vh - 3.5rem)",
+          }}
+          aria-label="Filters"
+        >
+          <FilterSection title="Inbox">
+            <Checkbox checked={filters.inboxes.support}  onChange={() => toggleInbox("support")}  label="Support"  />
+            <Checkbox checked={filters.inboxes.invoices} onChange={() => toggleInbox("invoices")} label="Invoices" />
+            <Checkbox checked={filters.inboxes.sales}    onChange={() => toggleInbox("sales")}    label="Sales"    />
+          </FilterSection>
+
+          <FilterSection title="Category">
+            <Checkbox checked={filters.categories.support}  onChange={() => toggleCat("support")}  label="Support"  />
+            <Checkbox checked={filters.categories.invoices} onChange={() => toggleCat("invoices")} label="Invoices" />
+            <Checkbox checked={filters.categories.sales}    onChange={() => toggleCat("sales")}    label="Sales"    />
+          </FilterSection>
+
+          <FilterSection title="Price Range">
+            <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2">
+              {["Support", "Invoices", "Sales"].map((l) => (
+                <Checkbox key={l} checked={false} onChange={() => {}} label={l} />
+              ))}
             </div>
-          )}
-        </header>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={priceRange}
+              onChange={(e) => setPriceRange(Number(e.target.value))}
+              className="w-full mt-1"
+              aria-label="Price range"
+            />
+          </FilterSection>
+        </aside>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0e1014]">
-          {!selectedTemplate ? (
-            /* Template Index */
-            <div>
-              <div className="text-center py-8 mb-7">
-                <div className="text-[10px] font-bold tracking-[2.5px] uppercase text-[#C0392B] mb-2">
-                  AUAPW Email Templates
-                </div>
-                <h2 className="text-3xl font-black tracking-tight mb-2">
-                  Professional Email Templates
-                </h2>
-                <p className="text-sm text-white/40 max-w-md mx-auto">
-                  9 ready-to-use templates for support, invoicing, and sales
-                  communications
-                </p>
+        {/* ── MAIN CONTENT ────────────────────────────────────────── */}
+        <main className="flex-1 flex flex-col min-h-0 p-5">
+
+          {/* Sort bar */}
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-[11px] text-white/35 uppercase tracking-wider">
+              {visibleTemplates.length} templates
+            </span>
+            <div className="flex items-center gap-3">
+              <label className="text-[11px] uppercase tracking-widest text-white/40 font-bold">Sort by:</label>
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-[#13161c] border border-white/12 text-[11px] text-white/70 px-3 py-2 pr-7 uppercase tracking-wider rounded-sm outline-none hover:border-white/25 transition-colors cursor-pointer"
+                >
+                  <option>RELEVANCE, PRICE, NAME</option>
+                  <option>NAME A–Z</option>
+                  <option>CATEGORY</option>
+                </select>
+                <Chevron open={false} />
               </div>
 
-              {/* Stats Bar */}
-              <div className="flex gap-px bg-white/5 rounded-xl overflow-hidden mb-7">
-                {[
-                  { num: "9", label: "Templates" },
-                  { num: "3", label: "Inboxes" },
-                  { num: "100%", label: "Responsive" },
-                  { num: "React", label: "Email" },
-                ].map((stat, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 p-4 text-center bg-[#111318]"
-                  >
-                    <div className="text-xl font-extrabold text-[#C0392B] tracking-wide">
-                      {stat.num}
-                    </div>
-                    <div className="text-[9px] text-white/30 uppercase tracking-wider mt-0.5">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
+              {/* Pagination */}
+              <div className="flex items-center gap-1 ml-4 text-[11px] text-white/35">
+                <span>Page {page} - {totalPages}</span>
+                <button className="w-7 h-7 flex items-center justify-center border border-white/12 text-white/35 hover:border-white/30 hover:text-white transition-colors rounded-sm" aria-label="Previous page">&#8249;</button>
+                <button className="w-7 h-7 flex items-center justify-center border border-[#e8720c] text-[#e8720c] rounded-sm text-xs font-bold" aria-current="page">1</button>
+                <button className="w-7 h-7 flex items-center justify-center border border-white/12 text-white/35 hover:border-white/30 hover:text-white transition-colors rounded-sm" aria-label="Next page">&#8250;</button>
               </div>
+            </div>
+          </div>
 
-              {/* Template Categories */}
-              {categories.map((category) => (
-                <div key={category.id} className="mb-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div
-                      className="w-8 h-8 rounded-md flex items-center justify-center"
-                      style={{ backgroundColor: `${category.color}20` }}
-                    >
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: category.color }}
-                      />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold">{category.label} Templates</div>
-                      <div className="text-[11px] text-white/30">{category.email}</div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {templates[category.id as keyof typeof templates].map((template) => (
-                      <button
-                        key={template.id}
-                        onClick={() => setSelectedTemplate(template.id)}
-                        className="bg-[#111318] border border-white/5 rounded-xl p-4 text-left hover:border-white/15 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/40 transition-all group relative overflow-hidden"
-                      >
-                        <div
-                          className="absolute top-0 left-0 right-0 h-0.5 rounded-t-xl"
-                          style={{ backgroundColor: category.color }}
-                        />
-                        <div className="text-sm font-bold mb-1">{template.name}</div>
-                        <div className="text-[11px] text-white/35 leading-relaxed mb-3">
-                          {template.description}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded"
-                            style={{
-                              backgroundColor: `${category.color}20`,
-                              color: category.color,
-                            }}
-                          >
-                            {category.label}
-                          </span>
-                          <span className="text-sm text-white/20 group-hover:text-white/60 transition-colors">
-                            &rarr;
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+          {/* Template grid */}
+          {!selectedId ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {visibleTemplates.map((template) => (
+                <TemplateCard
+                  key={template.id}
+                  template={template}
+                  onClick={() => setSelectedId(template.id)}
+                />
               ))}
             </div>
           ) : (
-            /* Template Preview */
-            <div className="bg-[#e8e8e8] rounded-lg p-6 flex justify-center min-h-full">
-              <div className="w-full max-w-[640px]">
+            /* ── PREVIEW PANEL ──────────────────────────────────── */
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setSelectedId(null)}
+                  className="text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors flex items-center gap-2"
+                >
+                  &#8592; Back to Templates
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigator.clipboard.writeText(htmlContent)}
+                    className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-white/20 text-white/60 hover:text-white hover:border-white/40 transition-colors"
+                  >
+                    Copy HTML
+                  </button>
+                  <button
+                    onClick={() => {
+                      const blob = new Blob([htmlContent], { type: "text/html" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `auapw-${activeTemplate?.id ?? "template"}.html`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: activeTemplate?.accent ?? "#e8720c" }}
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+
+              <div
+                className="rounded overflow-hidden"
+                style={{ border: "1px solid rgba(255,255,255,0.10)", background: "#e8e8e8" }}
+              >
                 <iframe
                   srcDoc={htmlContent}
-                  className="w-full min-h-[800px] bg-white rounded-lg shadow-lg"
-                  title={activeTemplate?.name}
+                  title={activeTemplate?.name ?? "Email preview"}
+                  className="w-full"
+                  style={{ minHeight: "820px", border: "none" }}
                 />
               </div>
             </div>
           )}
+        </main>
+      </div>
+
+      {/* ── FOOTER ───────────────────────────────────────────────── */}
+      <footer
+        className="border-t border-white/8 px-6 py-4 flex items-center justify-between"
+        style={{ background: "#13161c" }}
+      >
+        <div>
+          <div className="text-sm font-black uppercase tracking-widest text-white">AUAPW.ORG</div>
+          <div className="text-[10px] text-white/30">auapw.org &nbsp;|&nbsp; contact info</div>
         </div>
-      </main>
+        <div className="flex gap-6 text-[10px] uppercase tracking-widest text-white/35">
+          <button className="hover:text-white transition-colors">Terms</button>
+          <span className="text-white/15">|</span>
+          <button className="hover:text-white transition-colors">Privacy Policy</button>
+        </div>
+      </footer>
     </div>
   );
 }
