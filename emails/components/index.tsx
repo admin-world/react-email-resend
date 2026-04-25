@@ -9,20 +9,20 @@ import {
 } from "react-email";
 import * as React from "react";
 
-// Color palette
+// Color palette - AUAPW Corporate Design
 export const colors = {
-  red: "#C0392B",
-  redDark: "#96281B",
-  redLight: "#E74C3C",
-  gold: "#E67E22",
-  goldDark: "#BA6010",
-  navy: "#0d1f3c",
-  navyMid: "#1a3060",
-  navyLight: "#2563a8",
-  charcoal: "#111318",
-  dark: "#1C1F26",
-  mid: "#2a2d35",
-  steel: "#3d4149",
+  red: "#c9513e",
+  redDark: "#a63d2a",
+  redLight: "#d86451",
+  gold: "#d4853c",
+  goldDark: "#b86930",
+  navy: "#1a1f2e",
+  navyMid: "#242b3d",
+  navyLight: "#2d3449",
+  charcoal: "#0f1218",
+  dark: "#1a1f2e",
+  mid: "#242b3d",
+  steel: "#2d3449",
   gray: "#6b7280",
   silver: "#9ca3af",
   mist: "#e5e7eb",
@@ -30,6 +30,7 @@ export const colors = {
   green: "#16a34a",
   greenBg: "#dcfce7",
   redBg: "#fee2e2",
+  textSecondary: "#8b8b8b",
 };
 
 // Email Header Strip
