@@ -18,25 +18,28 @@ import QuotationApprovalEmail from "@/emails/sales/quotation-approval";
 import NewLeadDealerEmail from "@/emails/sales/new-lead-dealer";
 import OrderConfirmedEmail from "@/emails/sales/order-confirmed";
 
-const templates = {
+// Type for template component
+type EmailComponent = React.ComponentType<any>;
+
+const templates: Record<string, Array<{ id: string; name: string; description: string; component: EmailComponent }>> = {
   support: [
     {
       id: "ticket-opened",
       name: "Ticket Opened",
       description: "Confirmation email when a support ticket is created",
-      component: TicketOpenedEmail,
+      component: TicketOpenedEmail as EmailComponent,
     },
     {
       id: "ticket-resolved",
       name: "Ticket Resolved",
       description: "Notification when a support ticket is resolved",
-      component: TicketResolvedEmail,
+      component: TicketResolvedEmail as EmailComponent,
     },
     {
       id: "warranty-claim",
       name: "Warranty Claim",
       description: "Acknowledgment of a warranty claim submission",
-      component: WarrantyClaimEmail,
+      component: WarrantyClaimEmail as EmailComponent,
     },
   ],
   invoices: [
@@ -44,19 +47,19 @@ const templates = {
       id: "invoice-approval",
       name: "Invoice + Approval",
       description: "Invoice with approve/decline actions and payment options",
-      component: InvoiceApprovalEmail,
+      component: InvoiceApprovalEmail as EmailComponent,
     },
     {
       id: "payment-confirmed",
       name: "Payment Confirmed",
       description: "Confirmation when payment is received",
-      component: PaymentConfirmedEmail,
+      component: PaymentConfirmedEmail as EmailComponent,
     },
     {
       id: "payment-overdue",
       name: "Payment Overdue",
       description: "Urgent notice for past-due invoices",
-      component: PaymentOverdueEmail,
+      component: PaymentOverdueEmail as EmailComponent,
     },
   ],
   sales: [
@@ -64,19 +67,19 @@ const templates = {
       id: "quotation-approval",
       name: "Quotation + Approval",
       description: "Quote with parts table, pricing, and approval actions",
-      component: QuotationApprovalEmail,
+      component: QuotationApprovalEmail as EmailComponent,
     },
     {
       id: "new-lead-dealer",
       name: "New Lead / Dealer",
       description: "Welcome email for new dealers and business customers",
-      component: NewLeadDealerEmail,
+      component: NewLeadDealerEmail as EmailComponent,
     },
     {
       id: "order-confirmed",
       name: "Order Confirmed",
       description: "Order confirmation with shipping details",
-      component: OrderConfirmedEmail,
+      component: OrderConfirmedEmail as EmailComponent,
     },
   ],
 };
