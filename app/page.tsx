@@ -4,19 +4,19 @@ import * as React from "react";
 import { render } from "@react-email/render";
 
 // Support Templates
-import TicketOpenedEmail from "@/emails/support/ticket-opened";
-import TicketResolvedEmail from "@/emails/support/ticket-resolved";
-import WarrantyClaimEmail from "@/emails/support/warranty-claim";
+import { TicketOpenedEmail } from "@/emails/support/ticket-opened";
+import { TicketResolvedEmail } from "@/emails/support/ticket-resolved";
+import { WarrantyClaimEmail } from "@/emails/support/warranty-claim";
 
 // Invoice Templates
-import InvoiceApprovalEmail from "@/emails/invoices/invoice-approval";
-import PaymentConfirmedEmail from "@/emails/invoices/payment-confirmed";
-import PaymentOverdueEmail from "@/emails/invoices/payment-overdue";
+import { InvoiceApprovalEmail } from "@/emails/invoices/invoice-approval";
+import { PaymentConfirmedEmail } from "@/emails/invoices/payment-confirmed";
+import { PaymentOverdueEmail } from "@/emails/invoices/payment-overdue";
 
 // Sales Templates
-import QuotationApprovalEmail from "@/emails/sales/quotation-approval";
-import NewLeadDealerEmail from "@/emails/sales/new-lead-dealer";
-import OrderConfirmedEmail from "@/emails/sales/order-confirmed";
+import { QuotationApprovalEmail } from "@/emails/sales/quotation-approval";
+import { NewLeadDealerEmail } from "@/emails/sales/new-lead-dealer";
+import { OrderConfirmedEmail } from "@/emails/sales/order-confirmed";
 
 // Type for template component
 type EmailComponent = React.ComponentType<any>;
