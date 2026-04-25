@@ -253,40 +253,6 @@ export default function Page() {
     </div>
   );
 }
-      >
-        {checked && (
-          <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true">
-            <path d="M1 4l2 2 4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
-      </span>
-      <span className="text-[11px] uppercase tracking-wider text-white/55 group-hover:text-white/80 transition-colors">{label}</span>
-    </label>
-  );
-}
-
-/* ─── Filter section ────────────────────────────��────────────────── */
-function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(true);
-  return (
-    <div className="border-t border-white/8">
-      <button
-        className="w-full flex items-center justify-between px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-white/80 hover:text-white transition-colors"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
-        {title}
-        <Chevron open={open} />
-      </button>
-      {open && <div className="px-4 pb-3 flex flex-col gap-1">{children}</div>}
-    </div>
-  );
-}
-
-/* ─── Template card (matches the screenshot style) ──────────────── */
-function TemplateCard({ template, onClick }: { template: TemplateEntry; onClick: () => void }) {
-  return (
-    <article
       className="relative rounded overflow-hidden cursor-pointer group"
       style={{
         border: "1px solid rgba(255,255,255,0.12)",
